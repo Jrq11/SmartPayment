@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import AIAssistant from '../components/AIAssistant'
 import CreatePaymentModal from '../components/CreatePaymentModal'
 import MainNavigation from '../components/MainNavigation'
+import logo from '../Images/logo.png'
 import { studentGroups } from '../data/studentData'
 
 const feeAmounts = {
@@ -91,7 +92,7 @@ function TransactionsPage() {
               onClick={() => setAccountOpen((open) => !open)}
               aria-label="Open account menu"
             >
-              <img className="dashboard-logo" src="/logo.png" alt="CCS logo" />
+              <img className="dashboard-logo" src={logo} alt="CCS logo" />
             </button>
             {accountOpen ? (
               <div className="dashboard-dropdown-menu dashboard-account-menu">

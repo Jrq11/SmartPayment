@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import logo from '../Images/logo.png'
 import { studentGroups } from '../data/studentData'
 
 const startingAccounts = [
@@ -245,7 +246,7 @@ function AdminPage() {
               onClick={() => setAccountOpen((open) => !open)}
               aria-label="Open account menu"
             >
-              <img className="dashboard-logo" src="/logo.png" alt="CCS logo" />
+              <img className="dashboard-logo" src={logo} alt="CCS logo" />
             </button>
             {accountOpen ? (
               <div className="dashboard-dropdown-menu dashboard-account-menu">

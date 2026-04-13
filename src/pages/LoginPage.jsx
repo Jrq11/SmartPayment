@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import logo from '../Images/logo.png'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -26,7 +27,7 @@ function LoginPage() {
             <p className="eyebrow">CCS Smart Payment</p>
             <h1>Sign In</h1>
           </div>
-          <img className="auth-logo" src="/logo.png" alt="CCS logo" />
+          <img className="auth-logo" src={logo} alt="CCS logo" />
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
