@@ -113,6 +113,26 @@
   color: #0f766e;
 }
 
+.dashboard-nav .dashboard-nav-logout {
+  padding: 0.55rem 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #b91c1c;
+}
+
+.dashboard-nav .dashboard-nav-logout:hover {
+  background: rgba(185, 28, 28, 0.12);
+  color: #991b1b;
+}
+
+.dashboard-nav .dashboard-nav-logout-icon {
+  width: 24px;
+  height: 24px;
+  transform: scaleX(-1);
+}
+
 .dashboard-nav .dashboard-primary-action {
   padding: 0.72rem 1.2rem;
   color: #f8fff9;

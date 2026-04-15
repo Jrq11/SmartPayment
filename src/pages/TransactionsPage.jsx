@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import AIAssistant from '../components/AIAssistant'
 import CreatePaymentModal from '../components/CreatePaymentModal'
 import MainNavigation from '../components/MainNavigation'
@@ -13,8 +12,6 @@ const feeAmounts = {
 }
 
 function TransactionsPage() {
-  const navigate = useNavigate()
-  const [accountOpen, setAccountOpen] = useState(false)
   const [selectedYear, setSelectedYear] = useState('All')
   const [selectedFeeType, setSelectedFeeType] = useState('All')
   const [createPaymentOpen, setCreatePaymentOpen] = useState(false)
@@ -81,33 +78,7 @@ function TransactionsPage() {
     <main className="dashboard-page">
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
-          <div className="dashboard-dropdown dashboard-account-dropdown">
-            <button
-              type="button"
-              className={
-                accountOpen
-                  ? 'dashboard-logo-button dashboard-logo-button-open'
-                  : 'dashboard-logo-button'
-              }
-              onClick={() => setAccountOpen((open) => !open)}
-              aria-label="Open account menu"
-            >
-              <img className="dashboard-logo" src={logo} alt="CCS logo" />
-            </button>
-            {accountOpen ? (
-              <div className="dashboard-dropdown-menu dashboard-account-menu">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAccountOpen(false)
-                    navigate('/login', { replace: true })
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            ) : null}
-          </div>
+          <img className="dashboard-logo" src={logo} alt="CCS logo" />
           <div>
             <p className="eyebrow">CCS Treasurer</p>
             <h1>Transactions</h1>
@@ -117,7 +88,6 @@ function TransactionsPage() {
         <MainNavigation
           showCreatePayment
           onCreatePayment={() => {
-            setAccountOpen(false)
             setCreatePaymentOpen(true)
           }}
         />

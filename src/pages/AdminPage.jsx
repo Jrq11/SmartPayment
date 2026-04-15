@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import MainNavigation from '../components/MainNavigation'
 import logo from '../Images/logo.png'
 import { studentGroups } from '../data/studentData'
 
@@ -59,8 +59,6 @@ const getStudentStatus = (payments) =>
   Object.values(payments).every((paymentStatus) => paymentStatus === 'Paid') ? 'Paid' : 'Unpaid'
 
 function AdminPage() {
-  const navigate = useNavigate()
-  const [accountOpen, setAccountOpen] = useState(false)
   const [sectionOpen, setSectionOpen] = useState({
     accountForm: false,
     accountList: false,
@@ -235,38 +233,14 @@ function AdminPage() {
     <main className="dashboard-page">
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
-          <div className="dashboard-dropdown dashboard-account-dropdown">
-            <button
-              type="button"
-              className={
-                accountOpen
-                  ? 'dashboard-logo-button dashboard-logo-button-open'
-                  : 'dashboard-logo-button'
-              }
-              onClick={() => setAccountOpen((open) => !open)}
-              aria-label="Open account menu"
-            >
-              <img className="dashboard-logo" src={logo} alt="CCS logo" />
-            </button>
-            {accountOpen ? (
-              <div className="dashboard-dropdown-menu dashboard-account-menu">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAccountOpen(false)
-                    navigate('/login', { replace: true })
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            ) : null}
-          </div>
+          <img className="dashboard-logo" src={logo} alt="CCS logo" />
           <div>
             <p className="eyebrow">Administration</p>
             <h1>Admin Data Control</h1>
           </div>
         </div>
+
+        <MainNavigation />
 
       </header>
 

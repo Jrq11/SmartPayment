@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import AIAssistant from '../components/AIAssistant'
 import CreatePaymentModal from '../components/CreatePaymentModal'
 import MainNavigation from '../components/MainNavigation'
@@ -10,10 +10,8 @@ const getOverallPaymentStatus = (payments) =>
   Object.values(payments).every((status) => status === 'Paid') ? 'Paid' : 'Pending'
 
 function StudentsPage() {
-  const navigate = useNavigate()
   const { yearLevel } = useParams()
   const [selectedBlock, setSelectedBlock] = useState('Block A')
-  const [accountOpen, setAccountOpen] = useState(false)
   const [selectedPaymentType, setSelectedPaymentType] = useState('All')
   const [paymentView, setPaymentView] = useState('All')
   const [notificationMessage, setNotificationMessage] = useState('')
@@ -106,33 +104,7 @@ function StudentsPage() {
     <main className="dashboard-page">
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
-          <div className="dashboard-dropdown dashboard-account-dropdown">
-            <button
-              type="button"
-              className={
-                accountOpen
-                  ? 'dashboard-logo-button dashboard-logo-button-open'
-                  : 'dashboard-logo-button'
-              }
-              onClick={() => setAccountOpen((open) => !open)}
-              aria-label="Open account menu"
-            >
-              <img className="dashboard-logo" src={logo} alt="CCS logo" />
-            </button>
-            {accountOpen ? (
-              <div className="dashboard-dropdown-menu dashboard-account-menu">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAccountOpen(false)
-                    navigate('/login', { replace: true })
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
-            ) : null}
-          </div>
+          <img className="dashboard-logo" src={logo} alt="CCS logo" />
           <div>
             <p className="eyebrow">CCS Treasurer</p>
             <h1>{currentGroup.title}</h1>
@@ -142,7 +114,6 @@ function StudentsPage() {
         <MainNavigation
           showCreatePayment
           onCreatePayment={() => {
-            setAccountOpen(false)
             setNotifyOpen(false)
             setCreatePaymentOpen(true)
           }}
