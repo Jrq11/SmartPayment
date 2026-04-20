@@ -10,13 +10,14 @@ import TransactionsPage from './pages/TransactionsPage'
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/breakdowns" element={<BreakdownsPage />} />
       <Route path="/students/:yearLevel" element={<StudentsPage />} />
       <Route path="/transactions" element={<TransactionsPage />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
 }
