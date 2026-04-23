@@ -240,7 +240,7 @@ function AdminPage() {
           </div>
         </div>
 
-        <MainNavigation />
+        <MainNavigation logoutOnly />
 
       </header>
 

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { studentGroups } from '../data/studentData'
 
@@ -30,25 +31,51 @@ const navIcons = {
     'M9 4a2 2 0 0 0-2 2v2a1 1 0 1 0 2 0V6h7v12H9v-2a1 1 0 1 0-2 0v2a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H9Zm-3.7 7.3a1 1 0 0 0 0 1.4l2.8 2.8a1 1 0 1 0 1.4-1.4L8.42 13H14a1 1 0 1 0 0-2H8.42l1.08-1.1a1 1 0 1 0-1.4-1.4l-2.8 2.8Z',
 }
 
-function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout }) {
+function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, logoutOnly = false }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const defaultStudentRoute = `/students/${Object.keys(studentGroups)[0]}`
+  const [studentsOpen, setStudentsOpen] = useState(false)
 
   const isActive = (path) => pathname === path
   const isStudentsActive = pathname.startsWith('/students/')
 
   const handleNavigate = (path) => {
     navigate(path)
+    setStudentsOpen(false)
   }
 
   const handleLogout = () => {
+    setStudentsOpen(false)
+
     if (onLogout) {
       onLogout()
       return
     }
 
     navigate('/login', { replace: true })
+  }
+
+  if (logoutOnly) {
+    return (
+      <nav className="dashboard-nav" aria-label="Dashboard sections">
+        <button
+          type="button"
+          className="dashboard-nav-logout"
+          onClick={handleLogout}
+          aria-label="Logout"
+          title="Logout"
+        >
+          <svg
+            className="dashboard-nav-icon dashboard-nav-logout-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path d={navIcons.logout} />
+          </svg>
+        </button>
+      </nav>
+    )
   }
 
   return (
@@ -58,6 +85,7 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout }
           type="button"
           className="dashboard-primary-action"
           onClick={() => {
+            setStudentsOpen(false)
             onCreatePayment?.()
           }}
         >
@@ -73,13 +101,38 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout }
         <NavLabel icon={navIcons.dashboard}>Dashboard</NavLabel>
       </button>
 
-      <button
-        type="button"
-        className={isStudentsActive ? 'dashboard-nav-active' : ''}
-        onClick={() => handleNavigate(defaultStudentRoute)}
-      >
-        <NavLabel icon={navIcons.students}>Students</NavLabel>
-      </button>
+      <div className="dashboard-dropdown">
+        <button
+          type="button"
+          className={
+            studentsOpen || isStudentsActive
+              ? 'dashboard-dropdown-trigger dashboard-dropdown-open dashboard-nav-active'
+              : 'dashboard-dropdown-trigger'
+          }
+          onClick={() => setStudentsOpen((open) => !open)}
+        >
+          <NavLabel icon={navIcons.students}>Students</NavLabel>
+        </button>
+
+        {studentsOpen ? (
+          <div className="dashboard-dropdown-menu">
+            {Object.entries(studentGroups).map(([slug, group]) => (
+              <button
+                key={slug}
+                type="button"
+                className={
+                  pathname === `/students/${slug}`
+                    ? 'dashboard-dropdown-item dashboard-dropdown-item-active'
+                    : 'dashboard-dropdown-item'
+                }
+                onClick={() => handleNavigate(`/students/${slug}`)}
+              >
+                {group.title}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
 
       <button
         type="button"
