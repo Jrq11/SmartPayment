@@ -131,10 +131,14 @@ function AIAssistant({ breakdownTitles = defaultBreakdownTitles, unpaidFeeCounts
   return (
     <div className="dashboard-assistant">
       {assistantOpen ? (
-        <section className="dashboard-assistant-panel" aria-label="AI Assistant">
+        <section
+          className="dashboard-assistant-panel"
+          id="dashboard-ai-assistant-panel"
+          aria-label="AI Assistant"
+        >
           <p className="eyebrow">AI Assistant</p>
           <h2>Need help?</h2>
-          <div className="dashboard-assistant-messages" ref={assistantMessagesRef}>
+          <div className="dashboard-assistant-messages" ref={assistantMessagesRef} aria-live="polite">
             {assistantMessages.map((message) => (
               <article
                 key={message.id}
@@ -201,7 +205,9 @@ function AIAssistant({ breakdownTitles = defaultBreakdownTitles, unpaidFeeCounts
         type="button"
         className="dashboard-assistant-button"
         onClick={() => setAssistantOpen((open) => !open)}
-        aria-label="Open AI assistant"
+        aria-label={assistantOpen ? 'Close AI assistant' : 'Open AI assistant'}
+        aria-expanded={assistantOpen}
+        aria-controls="dashboard-ai-assistant-panel"
       >
         <svg
           className="dashboard-assistant-button-icon"

@@ -76,6 +76,10 @@ function TransactionsPage() {
 
   return (
     <main className="dashboard-page">
+      <a href="#transactions-main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
           <img className="dashboard-logo" src={logo} alt="CCS logo" />
@@ -93,7 +97,7 @@ function TransactionsPage() {
         />
       </header>
 
-      <section className="transactions-shell reveal-second">
+      <section id="transactions-main-content" className="transactions-shell reveal-second" tabIndex="-1">
         <div className="transactions-summary-card">
           <p className="eyebrow">Collected</p>
           <strong>PHP {totalCollected.toLocaleString()}</strong>

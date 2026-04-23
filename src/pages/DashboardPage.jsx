@@ -195,6 +195,10 @@ function DashboardPage() {
 
   return (
     <main className="dashboard-page">
+      <a href="#dashboard-main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
           <img className="dashboard-logo" src={logo} alt="CCS logo" />
@@ -212,7 +216,7 @@ function DashboardPage() {
         />
       </header>
 
-      <section className="dashboard-summary reveal-second">
+      <section id="dashboard-main-content" className="dashboard-summary reveal-second" tabIndex="-1">
         {summaryCards.map((card) => (
           <article key={card.label} className="dashboard-stat-card">
             <p>{card.label}</p>

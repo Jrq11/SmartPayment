@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { studentGroups } from '../data/studentData'
 
@@ -35,6 +35,9 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, 
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [studentsOpen, setStudentsOpen] = useState(false)
+  const dropdownRef = useRef(null)
+  const studentItemRefs = useRef([])
+  const dropdownMenuId = useId()
 
   const isActive = (path) => pathname === path
   const isStudentsActive = pathname.startsWith('/students/')
@@ -43,6 +46,33 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, 
     navigate(path)
     setStudentsOpen(false)
   }
+
+  const focusStudentItem = (index) => {
+    const items = studentItemRefs.current.filter(Boolean)
+    if (items.length === 0) {
+      return
+    }
+
+    const boundedIndex = Math.min(Math.max(index, 0), items.length - 1)
+    items[boundedIndex]?.focus()
+  }
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (!studentsOpen || !dropdownRef.current) {
+        return
+      }
+
+      if (!dropdownRef.current.contains(event.target)) {
+        setStudentsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick)
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick)
+    }
+  }, [studentsOpen])
 
   const handleLogout = () => {
     setStudentsOpen(false)
@@ -62,7 +92,7 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, 
           type="button"
           className="dashboard-nav-logout"
           onClick={handleLogout}
-          aria-label="Logout"
+          aria-label="Log out of your account"
           title="Logout"
         >
           <svg
@@ -101,7 +131,7 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, 
         <NavLabel icon={navIcons.dashboard}>Dashboard</NavLabel>
       </button>
 
-      <div className="dashboard-dropdown">
+      <div className="dashboard-dropdown" ref={dropdownRef}>
         <button
           type="button"
           className={
@@ -110,13 +140,29 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, 
               : 'dashboard-dropdown-trigger'
           }
           onClick={() => setStudentsOpen((open) => !open)}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              event.preventDefault()
+              setStudentsOpen(true)
+              window.requestAnimationFrame(() => {
+                focusStudentItem(event.key === 'ArrowDown' ? 0 : Object.keys(studentGroups).length - 1)
+              })
+            }
+
+            if (event.key === 'Escape') {
+              setStudentsOpen(false)
+            }
+          }}
+          aria-haspopup="menu"
+          aria-expanded={studentsOpen}
+          aria-controls={dropdownMenuId}
         >
           <NavLabel icon={navIcons.students}>Students</NavLabel>
         </button>
 
         {studentsOpen ? (
-          <div className="dashboard-dropdown-menu">
-            {Object.entries(studentGroups).map(([slug, group]) => (
+          <div className="dashboard-dropdown-menu" id={dropdownMenuId} role="menu" aria-label="Student year levels">
+            {Object.entries(studentGroups).map(([slug, group], index) => (
               <button
                 key={slug}
                 type="button"
@@ -126,6 +172,26 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, 
                     : 'dashboard-dropdown-item'
                 }
                 onClick={() => handleNavigate(`/students/${slug}`)}
+                role="menuitem"
+                ref={(element) => {
+                  studentItemRefs.current[index] = element
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'ArrowDown') {
+                    event.preventDefault()
+                    focusStudentItem(index + 1)
+                  }
+
+                  if (event.key === 'ArrowUp') {
+                    event.preventDefault()
+                    focusStudentItem(index - 1)
+                  }
+
+                  if (event.key === 'Escape') {
+                    event.preventDefault()
+                    setStudentsOpen(false)
+                  }
+                }}
               >
                 {group.title}
               </button>
@@ -154,7 +220,7 @@ function MainNavigation({ showCreatePayment = false, onCreatePayment, onLogout, 
         type="button"
         className="dashboard-nav-logout"
         onClick={handleLogout}
-        aria-label="Logout"
+        aria-label="Log out of your account"
         title="Logout"
       >
         <svg

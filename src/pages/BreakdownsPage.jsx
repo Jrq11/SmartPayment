@@ -78,6 +78,10 @@ function BreakdownsPage() {
 
   return (
     <main className="dashboard-page">
+      <a href="#breakdowns-main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
           <img className="dashboard-logo" src={logo} alt="CCS logo" />
@@ -95,7 +99,7 @@ function BreakdownsPage() {
         />
       </header>
 
-      <section className="content-grid breakdowns-grid">
+      <section id="breakdowns-main-content" className="content-grid breakdowns-grid" tabIndex="-1">
         <form className="payment-card reveal-second" onSubmit={handleSubmit}>
           <h2>Create breakdown</h2>
 

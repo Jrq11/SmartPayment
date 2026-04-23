@@ -231,6 +231,10 @@ function AdminPage() {
 
   return (
     <main className="dashboard-page">
+      <a href="#admin-main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
           <img className="dashboard-logo" src={logo} alt="CCS logo" />
@@ -244,7 +248,7 @@ function AdminPage() {
 
       </header>
 
-      <section className="content-grid admin-grid reveal-second">
+      <section id="admin-main-content" className="content-grid admin-grid reveal-second" tabIndex="-1">
         <form className="payment-card reveal-second" onSubmit={handleCreateAccount}>
           <div className="admin-card-header">
             <h2>Create staff account</h2>

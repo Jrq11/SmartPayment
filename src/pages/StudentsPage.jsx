@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import AIAssistant from '../components/AIAssistant'
 import CreatePaymentModal from '../components/CreatePaymentModal'
@@ -26,7 +26,13 @@ function StudentsPage() {
     [currentGroup],
   )
 
-  const students = currentGroup ? currentGroup.blocks[selectedBlock] ?? [] : []
+  const resolvedSelectedBlock =
+    blockNames.length > 0 && blockNames.includes(selectedBlock) ? selectedBlock : (blockNames[0] ?? '')
+
+  const students = useMemo(
+    () => (currentGroup ? currentGroup.blocks[resolvedSelectedBlock] ?? [] : []),
+    [currentGroup, resolvedSelectedBlock],
+  )
   const unpaidStudentsForSelectedFee = useMemo(() => {
     if (notifyFeeType === 'All') {
       return []
@@ -73,25 +79,16 @@ function StudentsPage() {
     return prioritized.filter((student) => student.payments[selectedPaymentType] === paymentView)
   }, [paymentView, selectedPaymentType, students])
 
-  useEffect(() => {
-    setSelectedBlock('Block A')
-  }, [yearLevel])
-
-  useEffect(() => {
-    setNotificationMessage('')
-    setNotifyOpen(false)
-  }, [selectedBlock, selectedPaymentType, yearLevel])
-
   const handleNotifyUnpaid = (event) => {
     event.preventDefault()
     if (unpaidStudentsForSelectedFee.length === 0) {
-      setNotificationMessage(`No students in ${selectedBlock} have unpaid ${notifyFeeType}.`)
+      setNotificationMessage(`No students in ${resolvedSelectedBlock} have unpaid ${notifyFeeType}.`)
       setNotifyOpen(false)
       return
     }
 
     setNotificationMessage(
-      `Reminder prepared for ${unpaidStudentsForSelectedFee.length} students in ${selectedBlock} with unpaid ${notifyFeeType}.`,
+      `Reminder prepared for ${unpaidStudentsForSelectedFee.length} students in ${resolvedSelectedBlock} with unpaid ${notifyFeeType}.`,
     )
     setNotifyOpen(false)
   }
@@ -102,6 +99,10 @@ function StudentsPage() {
 
   return (
     <main className="dashboard-page">
+      <a href="#students-main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <header className="dashboard-topbar reveal-first">
         <div className="dashboard-title-wrap">
           <img className="dashboard-logo" src={logo} alt="CCS logo" />
@@ -120,7 +121,7 @@ function StudentsPage() {
         />
       </header>
 
-      <section className="student-page-layout reveal-second">
+      <section id="students-main-content" className="student-page-layout reveal-second" tabIndex="-1">
         <aside className="student-blocks-card">
           <p className="eyebrow">Blocks</p>
           <h2>Select a block</h2>
@@ -129,8 +130,12 @@ function StudentsPage() {
               <button
                 key={block}
                 type="button"
-                className={selectedBlock === block ? 'student-block-button student-block-button-active' : 'student-block-button'}
-                onClick={() => setSelectedBlock(block)}
+                className={resolvedSelectedBlock === block ? 'student-block-button student-block-button-active' : 'student-block-button'}
+                onClick={() => {
+                  setSelectedBlock(block)
+                  setNotificationMessage('')
+                  setNotifyOpen(false)
+                }}
               >
                 {block}
               </button>
@@ -142,14 +147,18 @@ function StudentsPage() {
           <div className="student-panel-header">
             <div>
               <p className="eyebrow">Students</p>
-              <h2>{selectedBlock}</h2>
+              <h2>{resolvedSelectedBlock}</h2>
             </div>
             <div className="student-sort-controls">
               <label>
                 Fee Type
                 <select
                   value={selectedPaymentType}
-                  onChange={(event) => setSelectedPaymentType(event.target.value)}
+                  onChange={(event) => {
+                    setSelectedPaymentType(event.target.value)
+                    setNotificationMessage('')
+                    setNotifyOpen(false)
+                  }}
                 >
                   <option value="All">All</option>
                   <option value="Department Fee">Department Fee</option>
@@ -160,7 +169,14 @@ function StudentsPage() {
 
               <label>
                 Status
-                <select value={paymentView} onChange={(event) => setPaymentView(event.target.value)}>
+                <select
+                  value={paymentView}
+                  onChange={(event) => {
+                    setPaymentView(event.target.value)
+                    setNotificationMessage('')
+                    setNotifyOpen(false)
+                  }}
+                >
                   <option value="All">All</option>
                   <option value="Paid">Paid</option>
                   <option value="Pending">Pending</option>
@@ -171,6 +187,9 @@ function StudentsPage() {
                 type="button"
                 className="student-notify-button"
                 onClick={() => setNotifyOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={notifyOpen}
+                aria-controls="notify-unpaid-dialog"
               >
                 Notify Unpaid
               </button>
@@ -201,6 +220,7 @@ function StudentsPage() {
                                   ? 'student-status student-status-paid'
                                   : 'student-status student-status-unpaid'
                               }
+                              aria-label={`${paymentType} status: ${paymentStatus}`}
                             >
                               {paymentStatus}
                             </strong>
@@ -214,6 +234,7 @@ function StudentsPage() {
                           ? 'student-status student-status-paid'
                           : 'student-status student-status-unpaid'
                       }
+                      aria-label={`Overall payment status: ${overallStatus}`}
                     >
                       {overallStatus}
                     </span>
@@ -232,6 +253,7 @@ function StudentsPage() {
           onClick={() => setNotifyOpen(false)}
         >
           <section
+            id="notify-unpaid-dialog"
             className="student-notify-modal"
             role="dialog"
             aria-modal="true"
@@ -257,7 +279,7 @@ function StudentsPage() {
               </label>
 
               <p className="student-notify-helper">
-                This will notify all students in {selectedBlock} who still have unpaid{' '}
+                This will notify all students in {resolvedSelectedBlock} who still have unpaid{' '}
                 {notifyFeeType}.
               </p>
 

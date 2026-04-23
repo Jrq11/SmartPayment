@@ -21,6 +21,10 @@ function LoginPage() {
 
   return (
     <main className="auth-page">
+      <a href="#login-main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+
       <section className="auth-card reveal-first">
         <div className="auth-brand auth-brand-simple">
           <div>
@@ -30,28 +34,41 @@ function LoginPage() {
           <img className="auth-logo" src={logo} alt="CCS logo" />
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form id="login-main-content" onSubmit={handleSubmit} className="auth-form" noValidate>
           <label>
             Email
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="treasurer@school.edu"
+              required
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? 'login-form-error' : undefined}
             />
           </label>
 
           <label>
             Password
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter your password"
+              required
+              minLength={4}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? 'login-form-error' : undefined}
             />
           </label>
 
-          {error ? <p className="auth-error">{error}</p> : null}
+          {error ? (
+            <p id="login-form-error" className="auth-error" role="alert">
+              {error}
+            </p>
+          ) : null}
           <button type="submit">Sign In</button>
         </form>
       </section>
